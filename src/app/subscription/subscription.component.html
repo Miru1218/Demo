@@ -1,1 +1,19 @@
-<p>subscription works!</p>
+<div>
+  <button (click)="startCounter()">開始新的計數器</button>
+  <button (click)="count()">計數</button>
+  <button (click)="error()">發生錯誤</button>
+  <button (click)="complete()">完成計數</button>
+</div>
+
+<!-- 顯示目前計數器狀態 -->
+<div>
+  目前狀態：<span>{{ status }}</span>
+</div>
+<!-- 目前計數的值 -->
+<div>
+  目前計數：<span>{{ currentCounter }}</span>
+</div>
+<!-- 偶數計數值 -->
+<div>
+  偶數計數：<span>{{ evenCounter }}</span>
+</div>
