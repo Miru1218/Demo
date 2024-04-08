@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Component, OnDestroy } from '@angular/core';
+import { Subject, Subscription, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -7,12 +7,15 @@ import { filter } from 'rxjs/operators';
   templateUrl: './subscription.component.html',
   styles: []
 })
-export class SubscriptionComponent {
+export class SubscriptionComponent implements OnDestroy {
   status: string = ''; // 目前狀態
   currentCounter: number = 0; // 目前計數的值
   evenCounter: number = 0; // 偶數計數值
   counter: number = 0; // 計數器的值
   counter$!: Subject<number>; // 自訂 subject 來通知計數器值改變
+  subscription!: Subscription; // RxJS Subscription 物件
+  evenCounterSubscription!: Subscription; // 偶數計數器的訂閱
+  helloMessage: string = '';
 
   constructor() { }
 
@@ -28,7 +31,7 @@ export class SubscriptionComponent {
     );
 
     // 訂閱 counter$，顯示目前計數值，處理錯誤和完成計數的狀態
-    this.counter$.subscribe({
+    this.subscription = this.counter$.subscribe({
       next: data => {
         this.currentCounter = data;
       },
@@ -41,12 +44,31 @@ export class SubscriptionComponent {
     });
 
     // 訂閱偶數計數器，顯示偶數計數值
-    evenCounter$.subscribe(data => {
+    this.evenCounterSubscription = evenCounter$.subscribe(data => {
       this.evenCounter = data;
     });
 
     // 送出預設值
     this.counter$.next(this.counter);
+
+    // 建立並訂閱另一個 Observable，5 秒後取消訂閱
+    const anotherObservable = new Observable(subscriber => {
+      // 模擬一個異步操作
+      const intervalId = setInterval(() => {
+        subscriber.next('Hello');
+      }, 1000);
+      // 返回一個 Subscription 物件
+      return () => {
+        clearInterval(intervalId);
+        console.log('Subscription 已取消');
+      };
+    });
+    // 返回一個 Subscription 物件
+    const anotherSubscription = anotherObservable.subscribe(value => console.log(value));
+    // 5 秒後取消訂閱
+    setTimeout(() => {
+      anotherSubscription.unsubscribe();
+    }, 5000);
   }
 
   // 計數按鈕事件處理函數
@@ -63,5 +85,22 @@ export class SubscriptionComponent {
   // 完成按鈕事件處理函數
   complete() {
     this.counter$.complete();
+  }
+
+  // 取消訂閱按鈕事件處理函數
+  unsubscribe() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      // 取消偶數計數器的訂閱
+      this.evenCounterSubscription.unsubscribe();
+      this.status = '已取消訂閱';
+    } else {
+      console.warn('Subscription is not initialized');
+    }
+  }
+
+  ngOnDestroy() {
+    // 在組件被銷毀時取消訂閱，避免內存洩漏
+    this.unsubscribe();
   }
 }
