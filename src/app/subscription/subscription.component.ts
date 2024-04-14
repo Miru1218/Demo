@@ -97,7 +97,7 @@ export class SubscriptionComponent implements OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
       // 取消偶數計數器的訂閱
-      this.evenCounterSubscription.unsubscribe();
+      // this.evenCounterSubscription.unsubscribe();
       this.status = '已取消訂閱';
     } else {
       console.warn('Subscription is not initialized');
