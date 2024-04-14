@@ -15,7 +15,7 @@ export class SubscriptionComponent implements OnDestroy {
   counter$!: Subject<number>; // 自訂 subject 來通知計數器值改變
   subscription!: Subscription; // RxJS Subscription 物件
   evenCounterSubscription!: Subscription; // 偶數計數器的訂閱
-  helloMessage: string = '';
+  helloMessage: string = ''; // 顯示消息的属性
 
   constructor() { }
 
@@ -25,28 +25,33 @@ export class SubscriptionComponent implements OnDestroy {
     this.counter = 0;
     this.status = '開始計數';
 
-    // 建立一個偶數計數器
-    const evenCounter$ = this.counter$.pipe(
-      filter(data => data % 2 === 0)
-    );
+    // // 建立一個偶數計數器
+    // const evenCounter$ = this.counter$.pipe(
+    //   filter(data => data % 2 === 0)
+    // );
 
-    // 訂閱 counter$，顯示目前計數值，處理錯誤和完成計數的狀態
+    // 訂閱 counter$，顯示當前計數值，處理錯誤和完成計數的狀態
     this.subscription = this.counter$.subscribe({
       next: data => {
         this.currentCounter = data;
+
+        // 检查是否为偶数并更新偶数计数值
+        if (data % 2 === 0) {
+          this.evenCounter = data;
+        }
       },
       error: message => {
-        this.status = `錯誤 -> ${message}`;
+        this.status = `错误 -> ${message}`;
       },
       complete: () => {
         this.status = '完成';
       }
     });
 
-    // 訂閱偶數計數器，顯示偶數計數值
-    this.evenCounterSubscription = evenCounter$.subscribe(data => {
-      this.evenCounter = data;
-    });
+    // // 訂閱偶數計數器，顯示偶數計數值
+    // this.evenCounterSubscription = evenCounter$.subscribe(data => {
+    //   this.evenCounter = data;
+    // });
 
     // 送出預設值
     this.counter$.next(this.counter);

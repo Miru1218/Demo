@@ -7,30 +7,34 @@ import { Subject, Subscription } from 'rxjs';
   styles: []
 })
 export class ObserverComponent implements OnDestroy {
-  private youtuber$ = new Subject<number>();
-  private observerASubscription: Subscription;
-  private observerBSubscription: Subscription;
+  private youtuber$ = new Subject(); // 定義一個 Subject，用於發送影片上架的通知
+  private observerBSubscription: Subscription; // 觀察者 B 的訂閱
+  private observerASubscription: Subscription; // 觀察者 A 的訂閱
 
   constructor() {
     console.log('--- 開始 ---');
 
-    // 影片 1 上架，此時還沒有觀察者
+    // 影片 1 上架，此時還沒有任何觀察者
     this.youtuber$.next(1);
+    // (沒有任何輸出)
 
     // 建立觀察者 A 物件
     const observerA = {
-      next: (id: number) => {
+      next: (id: any) => {
         console.log(`我是觀察者 A，我收到影片 ${id} 上架通知了`);
-      }
+      },
+      error: () => { }, // 沒有要處理「錯誤」的話不一定要加上這一行
+      complete: () => { } // 沒有要處理「完成」的話不一定要加上這一行
     };
-    // 加入觀察者 A
+
+    // 加入觀察者 A，也就是觀察者 A 開啟通知了
     this.observerASubscription = this.youtuber$.subscribe(observerA);
 
     // 影片 2 上架，此時觀察者 A 會收到通知
     this.youtuber$.next(2);
 
     // 加入觀察者 B
-    this.observerBSubscription = this.youtuber$.subscribe((id: number) => {
+    this.observerBSubscription = this.youtuber$.subscribe(id => {
       console.log(`我是觀察者 B，我收到影片 ${id} 上架通知了`);
     });
 

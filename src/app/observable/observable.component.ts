@@ -11,47 +11,46 @@ export class ObservableComponent {
   constructor() {
     // 在建構子中調用函式，演示 Observable 的基本用法
     this.observableDemo();
-    // 在建構子中調用函式，演示 Observable 的異步操作
+    // 在建構子中調用函式，演示 Observable 的异步操作
     this.observableAsyncDemo();
   }
 
   // 演示使用 new Observable 创建 Observable 的基本用法
   observableDemo() {
-    console.log('練習使用 new Observable');
-    // 創建一個 Observable，傳入一個回調函數，這個回調函數用於定義 Observable 的行為
+    // 创建一个 Observable，传入一个回调函数，这个回调函数用于定义 Observable 的行为
     const source$ = new Observable(subscriber => {
       console.log('stream 開始');
-      // 向觀察者發送數據流
+      // 向观察者发送数据流
       subscriber.next(1);
       subscriber.next(2);
       subscriber.next(3);
       subscriber.next(4);
       console.log('stream 結束');
-      // 告訴觀察者數據流結束
+      // 告诉观察者数据流结束
       subscriber.complete();
     });
 
-    // 每次訂閱都會創建一個新的 Observable 實例
+    // 每次订阅都会创建一个新的 Observable 实例
     source$.subscribe({
-      next: data => console.log(`Observable 基本第一次訂閱: ${data}`),
-      complete: () => console.log('基本第一次訂閱完成')
+      next: data => console.log(`Observable 第一次訂閱: ${data}`),
+      complete: () => console.log('第一次訂閱完成')
     });
     source$.subscribe({
-      next: data => console.log(`Observable 基本第二次訂閱: ${data}`),
-      complete: () => console.log('基本第二次訂閱完成')
+      next: data => console.log(`Observable 第二次訂閱: ${data}`),
+      complete: () => console.log('第二次訂閱完成')
     });
   }
 
-  // 演示使用 new Observable 创建 Observable 的異步操作
+  // 演示使用 new Observable 创建 Observable 的异步操作
   observableAsyncDemo() {
     console.log('練習使用 new Observable 加上非同步範例');
-    // 創建一個 Observable，其中包含一個異步操作
+    // 创建一个 Observable，其中包含一个异步操作
     const source$ = new Observable(subscriber => {
       console.log('stream 開始');
       subscriber.next(1);
       subscriber.next(2);
       subscriber.next(3);
-      // 模擬異步操作，例如通過 setTimeout 或者 HTTP 請求
+      // 模拟异步操作，例如通过 setTimeout 或者 HTTP 请求
       setTimeout(() => {
         subscriber.next(4);
         subscriber.complete();
@@ -59,14 +58,14 @@ export class ObservableComponent {
       });
     });
 
-    // 每次訂閱都會創建一個新的 Observable 實例
+    // 每次订阅都会创建一个新的 Observable 实例
     source$.subscribe({
-      next: data => console.log(`Observable 異步第一次訂閱: ${data}`),
-      complete: () => console.log('異步第一次訂閱完成')
+      next: data => console.log(`Observable 第一次訂閱: ${data}`),
+      complete: () => console.log('第一次訂閱完成')
     });
     source$.subscribe({
-      next: data => console.log(`Observable 異步第二次訂閱: ${data}`),
-      complete: () => console.log('異步第二次訂閱完成')
+      next: data => console.log(`Observable 第二次訂閱: ${data}`),
+      complete: () => console.log('第二次訂閱完成')
     });
   };
 
